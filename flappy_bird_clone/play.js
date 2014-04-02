@@ -1,32 +1,13 @@
-/// <reference path="phaser.js" />
+﻿/// <reference path="phaser.js" />
+/// <reference path="main.js" />
 
-// Initialize Phaser, and creates a 400x490px game
-var game = new Phaser.Game(400, 490, Phaser.AUTO, 'game_div');
-
-// Creates a new 'main' state that wil contain the game
-var main_state = {
-
-  preload: function() { 
-    // Function called first to load all the assets
-
-    //Load background
-    game.stage.backgroundColor = '#71c5cf';
-
-    //load assets
-    //images
-    game.load.image('bird','assets/bird.png');
-    game.load.image('pipe', 'assets/pipe.png');
-    //sound
-    game.load.audio('jump', 'assets/jump.wav');
-    game.load.audio('impact', 'assets/impact.mp3');
-  },
+var play_state = {
+  //no preload needed
 
   create: function () {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    //score
-    score = 0;
-
     style = { font: "30px Arial", fill: "#ffffff" };
+    score = 0;
     label_score = this.game.add.text(20, 20, "0", style);
 
     // Fuction called after 'preload' to setup the game  
@@ -63,8 +44,8 @@ var main_state = {
     jump_sound = game.add.audio('jump');
     impact_sound = game.add.audio('impact');
   },
-    
-  update: function() {
+
+  update: function () {
     // Function called 60 times per second
     if (bird.inWorld == false) {
       this.restart_game();
@@ -74,7 +55,7 @@ var main_state = {
     game.physics.arcade.overlap(bird, pipes, this.hit_pipe)
 
     //change angle of bird
-    if (bird.angle < 20)  
+    if (bird.angle < 20)
       bird.angle += 1;
   },
 
@@ -109,7 +90,7 @@ var main_state = {
 
   restart_game: function () {
     game.time.events.remove(timer); //reset timer
-    game.state.start('main'); //changing to main state(restart)
+    game.state.start('menu'); //changing to main state(restart)
   },
 
   add_one_pipe: function (x, y) {
@@ -130,13 +111,9 @@ var main_state = {
         this.add_one_pipe(400, i * 60 + 10) //normal x, random height
       };
     }
-    score = score + 1;
+    score += 1;
     label_score.text = score;
 
     console.log("created pipes")
   }
 };
-
-// Add and start the 'main' state to start the game
-game.state.add('main', main_state);  
-game.state.start('main'); 
