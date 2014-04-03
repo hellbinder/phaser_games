@@ -1,6 +1,6 @@
 # Phaser Games Test
 
-This repo will conatain different simple games I have created using phaser.js. 
+This repo will contain different simple games I have created using phaser.js. 
 
 **Why phaser.js you ask?**
 
