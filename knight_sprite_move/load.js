@@ -8,10 +8,8 @@ var load_state = {
 
     //load assets
     //images
-    //game.load.spritesheet("paladin", "assets/paladin_sprite.png", 120, 100,22,-1);
-    game.load.atlas("paladin", "/assets/paladin.png", "assets/paladin_sprite.json");
-    //game.load.atlas("paladin", "/assets/running_bot.png", "assets/running_bot.json");
-
+    game.load.atlasJSONHash("paladin", "/assets/paladin_sprite.png", "assets/paladin_sprite.json");
+    game.load.image("ground", '/assets/platform.png');
     //sound
   },
   create: function () {
