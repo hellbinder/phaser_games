@@ -4,27 +4,27 @@
 var play_state = {
   paladin: null,
   create: function () {
+
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
 
 
     platforms = game.add.group();
-    platforms.enableBody = true;
 
     tiles = game.add.group();
     // Here we create the ground.
     var ground;//= platforms.create(0, game.world.height - 64, 'floortiles', 6);
-    CreateTiles(platforms, 0, 2, 'floortiles', 10);
-    //CreateTiles(platforms, 3, 0, 'floortiles', 3);
-    CreateTiles(tiles, 3, 6, 'floortiles', 3, false);
-    CreateTiles(tiles, 4, 6, 'floortiles', 3, false);
+    CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
+    CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
+    CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
 
     //  Now let's create two ledges
     var ledge = platforms.create(400, 400, 'floortiles', 3);
     //ledge.body.immovable = true;
 
-    paladin = game.add.sprite(100, 100, 'paladin');
+    paladin = game.add.sprite(100, game.world.height - 120, 'paladin');
     game.physics.arcade.enable(paladin);
     paladin.body.gravity.y = 300;
     paladin.body.collideWorldBounds = true;
@@ -32,7 +32,9 @@ var play_state = {
 
     paladin.animations.add('stand',game.math.numberArray(0,10), 7);
     paladin.animations.add('walk',game.math.numberArray(11,18), 7);
-    paladin.animations.play('stand',7, true);
+    paladin.animations.play('stand', 7, true);
+
+    game.camera.follow(paladin);
 
   },
   update: function () {
@@ -63,14 +65,14 @@ var play_state = {
 
 function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, immovable) {
   //TESTING SOMETHING OUT
-  loopAmount = 30;// game.world.width / 20; // world width / tile width.
-  this.immovable = immovable || true;
-  debugger;
+  var loopAmount = game.world.width / 20; // world width / tile width.
+  //debugger;
   for (var i = 0; i < loopAmount; i++) {
-    for (var j = startrow; j <= (rowcount + startrow); j++) {
+    for (var j = startrow ; j <= (rowcount + startrow - 1); j++) {
       ground = platformToUse.create(i * 20, game.world.height - (j * 20), 'floortiles', tileindex);
       ground.scale.setTo(1, 1);
-      if (ground.body) {
+      if (immovable) {
+        game.physics.arcade.enable(ground);
         ground.body.immovable = true;
       }
     }
