@@ -46,26 +46,37 @@ var play_state = {
     if (cursors.right.isDown) {
       if(paladin.scale.x < 0) paladin.scale.x *= -1
       paladin.animations.play('walk')
-      paladin.body.velocity.x = 100;
+      // paladin.body.velocity.x = 100;
+      platforms.position.x -= 2;
+      tiles.position.x -= 2;
+      platforms.setAll('checkWorldBounds', true);
+      tiles.setAll('checkWorldBounds', true);
+      platforms.setAll('outOfBoundsKill', true);
+      tiles.setAll('outOfBoundsKill', true);
+
+
     }
     else if(cursors.left.isDown){
       if(paladin.scale.x > 0) paladin.scale.x *= -1
       paladin.animations.play('walk');
-      paladin.body.velocity.x = -100;
+      // paladin.body.velocity.x = -100;
+      platforms.position.x += 2;
+      tiles.position.x += 2;
     }
     else
       paladin.animations.play('stand');
   },
 
   render: function () {
-    game.debug.canvas;
+    game.debug.canvas;
+
   }
 
 };
 
 function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, immovable) {
   //TESTING SOMETHING OUT
-  var loopAmount = game.world.width / 20; // world width / tile width.
+  var loopAmount = 40; //game.world.width / 20; // world width / tile width.
   //debugger;
   for (var i = 0; i < loopAmount; i++) {
     for (var j = startrow ; j <= (rowcount + startrow - 1); j++) {
