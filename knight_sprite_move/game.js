@@ -1,7 +1,7 @@
 ﻿/// <reference path="phaser.js" />
 
 //initialize phase
-var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game_div');
+var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game_div') ;
 
 //score
 

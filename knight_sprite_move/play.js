@@ -1,8 +1,7 @@
 ﻿/// <reference path="phaser.js" />
 /// <reference path="game.js" />
-
+var paladin, floorTile1, floorTile2, floorTile3;
 var play_state = {
-  paladin: null,
   create: function () {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -12,16 +11,23 @@ var play_state = {
 
 
     platforms = game.add.group();
-
     tiles = game.add.group();
+    sprite_tiles = game.add.group();
     // Here we create the ground.
     var ground;//= platforms.create(0, game.world.height - 64, 'floortiles', 6);
-    CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
-    CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
-    CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
+
+    floorTile1 = game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, 'floortiles', 3);
+    floorTile2 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 40, 'floortiles', 233);
+    floorTile3 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
+    game.physics.arcade.enable(floorTile2);
+    floorTile2.body.immovable = true;
+    floorTile2.body.allowGravity = false;
+    //CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
+    //CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
+    //CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
 
     //  Now let's create two ledges
-    var ledge = platforms.create(400, 400, 'floortiles', 3);
+    //ledge = platforms.create(400, 400, 'floortiles', 3);
     //ledge.body.immovable = true;
 
     paladin = game.add.sprite(100, game.world.height - 120, 'paladin');
@@ -39,9 +45,10 @@ var play_state = {
   },
   update: function () {
     //collide palading with platforms
-    game.physics.arcade.collide(paladin, platforms);
-
+    game.physics.arcade.collide(paladin, floorTile2);
+    //game.physics.arcade.collide(paladin, platforms);
     paladin.body.velocity.x = 0;//reset
+    //SetPlatformProperties([platforms, tiles], ['checkWorldBounds', 'outOfBoundsKill']);
 
     if (cursors.right.isDown) {
       if(paladin.scale.x < 0) paladin.scale.x *= -1
@@ -49,11 +56,9 @@ var play_state = {
       // paladin.body.velocity.x = 100;
       platforms.position.x -= 2;
       tiles.position.x -= 2;
-      platforms.setAll('checkWorldBounds', true);
-      tiles.setAll('checkWorldBounds', true);
-      platforms.setAll('outOfBoundsKill', true);
-      tiles.setAll('outOfBoundsKill', true);
-
+      floorTile1.tilePosition.x -= 2;
+      floorTile2.tilePosition.x -= 2;
+      floorTile3.tilePosition.x -= 2;
 
     }
     else if(cursors.left.isDown){
@@ -62,30 +67,46 @@ var play_state = {
       // paladin.body.velocity.x = -100;
       platforms.position.x += 2;
       tiles.position.x += 2;
+      floorTile1.tilePosition.x += 2;
+      floorTile2.tilePosition.x += 2;
+      floorTile3.tilePosition.x += 2;
     }
     else
       paladin.animations.play('stand');
   },
 
   render: function () {
-    game.debug.canvas;
-
+    game.debug.body(floorTile3);
   }
 
 };
 
-function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, immovable) {
+function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, immovable, width) {
   //TESTING SOMETHING OUT
-  var loopAmount = 40; //game.world.width / 20; // world width / tile width.
+  if (typeof width === "undefined" || width === null || width == 0) {
+    width = 40;
+  }
+  //game.world.width / 20; // world width / tile width.
   //debugger;
-  for (var i = 0; i < loopAmount; i++) {
+  for (var i = 0; i < width; i++) {
     for (var j = startrow ; j <= (rowcount + startrow - 1); j++) {
       ground = platformToUse.create(i * 20, game.world.height - (j * 20), 'floortiles', tileindex);
       ground.scale.setTo(1, 1);
+      ground.events.onKilled.add(function () { console.log("hi") }, this);
       if (immovable) {
         game.physics.arcade.enable(ground);
         ground.body.immovable = true;
       }
+    }
+  }
+}
+
+function SetPlatformProperties(platforms, properties)
+{
+  for (var i in platforms) {
+    for (var j in properties)
+    {
+      platforms[i].setAll(properties[j], true);
     }
   }
 }
