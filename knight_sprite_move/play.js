@@ -1,6 +1,6 @@
 ﻿/// <reference path="phaser.js" />
 /// <reference path="game.js" />
-var paladin, floorTile1, floorTile2, floorTile3;
+var paladin, floorTile1, floorTile2, floorTile3,;
 var play_state = {
   create: function () {
 
@@ -17,11 +17,12 @@ var play_state = {
     var ground;//= platforms.create(0, game.world.height - 64, 'floortiles', 6);
 
     floorTile1 = game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, 'floortiles', 3);
-    floorTile2 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 40, 'floortiles', 233);
-    floorTile3 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
-    game.physics.arcade.enable(floorTile2);
-    floorTile2.body.immovable = true;
-    floorTile2.body.allowGravity = false;
+    floorTile2 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
+    floorTile3 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 20, 'floortiles', 233);
+    game.physics.arcade.enable(floorTile3);
+    floorTile3.body.immovable = true;
+    floorTile3.body.allowGravity = false;
+
     //CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
     //CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
     //CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
@@ -45,7 +46,7 @@ var play_state = {
   },
   update: function () {
     //collide palading with platforms
-    game.physics.arcade.collide(paladin, floorTile2);
+    game.physics.arcade.collide(paladin, floorTile3);
     //game.physics.arcade.collide(paladin, platforms);
     paladin.body.velocity.x = 0;//reset
     //SetPlatformProperties([platforms, tiles], ['checkWorldBounds', 'outOfBoundsKill']);
@@ -76,7 +77,7 @@ var play_state = {
   },
 
   render: function () {
-    game.debug.body(floorTile3);
+    // game.debug.body(floorTile3);
   }
 
 };
@@ -109,4 +110,13 @@ function SetPlatformProperties(platforms, properties)
       platforms[i].setAll(properties[j], true);
     }
   }
+}
+
+
+function AddBackgroundTileSprite(startrow, rowcount, key, frame)
+{
+  var gameHeight = game.world.height;
+  var gameWidth = game.world.width;
+
+  return game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, key, frame);
 }
