@@ -1,5 +1,6 @@
 ﻿/// <reference path="phaser.js" />
 /// <reference path="game.js" />
+var world_tiles;
 
 var load_state = {
   preload: function () {
@@ -10,12 +11,12 @@ var load_state = {
     //images
     game.load.atlasJSONHash("paladin", "/assets/paladin_sprite.png", "assets/paladin_sprite.json");
     game.load.image("ground", '/assets/platform.png');
-    game.load.spritesheet('floortiles', "/assets/floor-tiles-20x20.png", 20, 20);
+    world_tiles = game.load.spritesheet('floortiles', "/assets/floor-tiles-20x20.png", 20, 20);
     //sound
   },
   create: function () {
     //go to menu state one all assets loaded
-    game.state.start("play");    
+    game.state.start("play");
   }
 };
 

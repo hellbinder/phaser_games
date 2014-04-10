@@ -1,6 +1,6 @@
 ﻿/// <reference path="phaser.js" />
 /// <reference path="game.js" />
-var paladin, floorTile1, floorTile2, floorTile3,;
+var paladin, floorTile1, floorTile2, floorTile3;
 var play_state = {
   create: function () {
 
@@ -16,9 +16,10 @@ var play_state = {
     // Here we create the ground.
     var ground;//= platforms.create(0, game.world.height - 64, 'floortiles', 6);
 
-    floorTile1 = game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, 'floortiles', 3);
-    floorTile2 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
-    floorTile3 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 20, 'floortiles', 233);
+    //floorTile1 = game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, 'floortiles', 3);
+    //floorTile2 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
+    //floorTile3 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 20, 'floortiles', 233);
+    AddBackgroundTileSprite(0, 3, 'floortiles', 3);
     game.physics.arcade.enable(floorTile3);
     floorTile3.body.immovable = true;
     floorTile3.body.allowGravity = false;
@@ -117,6 +118,9 @@ function AddBackgroundTileSprite(startrow, rowcount, key, frame)
 {
   var gameHeight = game.world.height;
   var gameWidth = game.world.width;
-
+  debugger;
+  var tileWidth = world_tiles._fileList[0].frameWidth;
+  console.log(tileWidth);
+  game.cache.getImage()
   return game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, key, frame);
 }
