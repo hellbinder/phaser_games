@@ -27,7 +27,6 @@ var play_state = {
     floorTile1.body.immovable = true;
     floorTile1.body.allowGravity = false;
 
-
     //CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
     //CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
     //CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
@@ -48,7 +47,7 @@ var play_state = {
   update: function () {
     //collide palading with platforms
     game.physics.arcade.collide(paladin, floorTile1);
-    game.physics.arcade.collide(paladin, platforms);
+    //game.physics.arcade.collide(paladin, platforms);
     paladin.body.velocity.x = 0;//reset
     //SetPlatformProperties([platforms, tiles], ['checkWorldBounds', 'outOfBoundsKill']);
 
@@ -95,11 +94,6 @@ function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, imm
       ground = platformToUse.create(i * 20, game.world.height - (j * 20), 'floortiles', tileindex);
       ground.scale.setTo(1, 1);
       ground.events.onKilled.add(function () { console.log("hi") }, this);
-      //testing..to delete later
-      ground.inputEnabled = true;
-      ground.events.onInputDown.add(function (b) {
-        b.destroy();
-      });
       if (immovable) {
         game.physics.arcade.enable(ground);
         ground.body.immovable = true;
