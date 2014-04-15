@@ -19,18 +19,18 @@ var play_state = {
     //floorTile1 = game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, 'floortiles', 3);
     //floorTile2 = game.add.tileSprite(0, game.world.height - 60, game.world.width, 60, 'floortiles', 233);
     //floorTile3 = game.add.tileSprite(0, game.world.height - 20, game.world.width, 20, 'floortiles', 233);
-    AddBackgroundTileSprite(0, 3, 'floortiles', 3);
-    game.physics.arcade.enable(floorTile3);
-    floorTile3.body.immovable = true;
-    floorTile3.body.allowGravity = false;
+
+    floorTile1 = AddBackgroundTileSprite(1, 1, 'floortiles', 233, 20);
+    floorTile2 = AddBackgroundTileSprite(2, 2, 'floortiles', 233, 20);
+    floorTile3 = AddBackgroundTileSprite(4, 10, 'floortiles', 3, 20);
+    game.physics.arcade.enable(floorTile1);
+    floorTile1.body.immovable = true;
+    floorTile1.body.allowGravity = false;
+
 
     //CreateTiles(platforms, 1, 2, 'floortiles', 233, true);
     //CreateTiles(platforms, 3, 1, 'floortiles', 233, false);
     //CreateTiles(tiles, 4, 10, 'floortiles', 3, false);
-
-    //  Now let's create two ledges
-    //ledge = platforms.create(400, 400, 'floortiles', 3);
-    //ledge.body.immovable = true;
 
     paladin = game.add.sprite(100, game.world.height - 120, 'paladin');
     game.physics.arcade.enable(paladin);
@@ -47,8 +47,8 @@ var play_state = {
   },
   update: function () {
     //collide palading with platforms
-    game.physics.arcade.collide(paladin, floorTile3);
-    //game.physics.arcade.collide(paladin, platforms);
+    game.physics.arcade.collide(paladin, floorTile1);
+    game.physics.arcade.collide(paladin, platforms);
     paladin.body.velocity.x = 0;//reset
     //SetPlatformProperties([platforms, tiles], ['checkWorldBounds', 'outOfBoundsKill']);
 
@@ -95,6 +95,11 @@ function CreateTiles(platformToUse, startrow, rowcount, tilename, tileindex, imm
       ground = platformToUse.create(i * 20, game.world.height - (j * 20), 'floortiles', tileindex);
       ground.scale.setTo(1, 1);
       ground.events.onKilled.add(function () { console.log("hi") }, this);
+      //testing..to delete later
+      ground.inputEnabled = true;
+      ground.events.onInputDown.add(function (b) {
+        b.destroy();
+      });
       if (immovable) {
         game.physics.arcade.enable(ground);
         ground.body.immovable = true;
@@ -114,13 +119,12 @@ function SetPlatformProperties(platforms, properties)
 }
 
 
-function AddBackgroundTileSprite(startrow, rowcount, key, frame)
+function AddBackgroundTileSprite(startrow, rowcount, key, frame, tileWidth)
 {
   var gameHeight = game.world.height;
   var gameWidth = game.world.width;
-  debugger;
-  var tileWidth = world_tiles._fileList[0].frameWidth;
-  console.log(tileWidth);
-  game.cache.getImage()
-  return game.add.tileSprite(0, game.world.height - 180, game.world.width, 120, key, frame);
+  var startposition = gameHeight - (startrow * tileWidth) - (rowcount * tileWidth) + tileWidth
+  //return game.add.tileSprite(0, gameHeight - (startrow * tileWidth), gameWidth, (rowcount * tileWidth), key, frame);
+  return game.add.tileSprite(0, startposition, game.world.width, (rowcount * tileWidth), key, frame);
+
 }
