@@ -16,7 +16,8 @@ var play_state = {
     //  The second parameter maps this name to the Phaser.Cache key 'tiles'
     map.addTilesetImage('floor-tiles-20x20', 'tiles');
 
-    map.setCollision([235,193]);
+    map.setCollision([235,193]);
+
     main_layer = map.createLayer('Main Layer');
     main_layer.resizeWorld();
 
@@ -36,7 +37,8 @@ var play_state = {
   },
   update: function () {
     //collide palading with map
-    game.physics.arcade.collide(paladin, main_layer);
+    game.physics.arcade.collide(paladin, main_layer);
+
     paladin.body.velocity.x = 0;//reset
     //SetPlatformProperties([platforms, tiles], ['checkWorldBounds', 'outOfBoundsKill']);
 
