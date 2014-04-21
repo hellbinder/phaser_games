@@ -16,15 +16,13 @@ var play_state = {
     //  The second parameter maps this name to the Phaser.Cache key 'tiles'
     map.addTilesetImage('floor-tiles-20x20', 'tiles');
 
-    map.setCollision([235,196]);
+    map.setCollision([235,193]);
     main_layer = map.createLayer('Main Layer');
-    main_layer.resizeWorld(); 
-
-    game.physics.arcade.collide(paladin, map, HitWall, null, this);
+    main_layer.resizeWorld();
 
     paladin = game.add.sprite(100, game.world.height - 140, 'paladin');
     game.physics.arcade.enable(paladin);
-    paladin.body.gravity.y = 300;
+    paladin.body.gravity.y = 700;
     paladin.body.collideWorldBounds = true;
     paladin.anchor.setTo(0.5, 0.5); //so the texture of the sprite is centered
 
@@ -56,6 +54,12 @@ var play_state = {
     }
     else
       paladin.animations.play('stand');
+
+    if (cursors.up.isDown) {
+      if (paladin.body.onFloor()) {
+        paladin.body.velocity.y = -150;
+      }
+    }
   },
 
   render: function () {
