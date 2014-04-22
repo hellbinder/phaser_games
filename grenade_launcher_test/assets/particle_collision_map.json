@@ -31,6 +31,25 @@
             },
          "spacing":0,
          "tileheight":20,
+         "tileproperties":
+            {
+             "160":
+                {
+                 "destroyable":"true"
+                },
+             "161":
+                {
+                 "destroyable":"true"
+                },
+             "162":
+                {
+                 "destroyable":"true"
+                },
+             "163":
+                {
+                 "destroyable":"true"
+                }
+            },
          "tilewidth":20
         }],
  "tilewidth":20,
