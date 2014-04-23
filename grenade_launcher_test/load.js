@@ -14,6 +14,7 @@ var load_state = {
     game.load.spritesheet("tile_ss", '/global_images/floor-tiles-20x20.png', 20, 20);
     game.load.image('grenade-launcher', 'assets/multi_grenade_launcher.png')
     game.load.image('bullet', 'assets/bullet.png')
+    game.load.spritesheet("space_items", 'assets/space_player_bullets.png', 32, 32);
     //sound
   },
   create: function () {

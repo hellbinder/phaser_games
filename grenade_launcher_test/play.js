@@ -3,6 +3,7 @@
 var bullets, layer, gl;
 var block_emitter;
 var bullet_emitter;
+var bullet_trail;
 var fireRate = 100, nextFire = 0;
 var grenadeLauncherImage;
 var play_state = {
@@ -38,11 +39,11 @@ var play_state = {
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-    bullets.createMultiple(50, 'bullet');
+    bullets.createMultiple(50, 'space_items', 31);
     bullets.setAll('checkWorldBounds', true);
     bullets.setAll('outOfBoundsKill', true);
 
-    //create cluster bomb emmiter
+    //create block bomb emmiter
     block_emitter = game.add.emitter(game.world.centerX, game.world.centerY, 250);
     block_emitter.physicsBodyType = Phaser.Physics.Arcade;
     block_emitter.enableBody = true;
@@ -56,19 +57,28 @@ var play_state = {
     block_emitter.angularDrag = 30;
     block_emitter.particleDrag = .08;
 
-    //create block bomb emmiter
+    //create cluster bomb emmiter
     bullet_emitter = game.add.emitter(game.world.centerX, game.world.centerY, 250);
     bullet_emitter.physicsBodyType = Phaser.Physics.Arcade;
-    bullet_emitter.makeParticles('bullet');
+    bullet_emitter.makeParticles('space_items',61);
     bullet_emitter.minParticleSpeed.setTo(-200, -300);
     bullet_emitter.maxParticleSpeed.setTo(200, -400);
-    bullet_emitter.minParticleScale = .5;
-    bullet_emitter.maxParticleScale = .5;
+    bullet_emitter.minParticleScale = .3;
+    bullet_emitter.maxParticleScale = .31;
     bullet_emitter.gravity = 500;
     bullet_emitter.bounce.setTo(0.5, 0.5);
     bullet_emitter.angularDrag = 30;
     bullet_emitter.particleDrag = .8;
 
+    //bullet trail
+    bullet_trail = game.add.emitter(0, 0,2000);
+    bullet_trail.makeParticles('bullet');
+    bullet_trail.alpha = .5;
+    bullet_trail.minParticleSpeed.setTo(0, 0);
+    bullet_trail.maxParticleSpeed.setTo(0, 0);
+    bullet_trail.minRotation = 0;
+    bullet_trail.maxRotation = 0;
+    bullet_trail.gravity = 0;
 
     
   },
@@ -76,6 +86,7 @@ var play_state = {
     game.physics.arcade.collide(bullet_emitter, main_layer, KillEmitter);
     game.physics.arcade.collide(bullets, main_layer, KillBullet);
     game.physics.arcade.collide(block_emitter, main_layer);
+    game.physics.arcade.collide(block_emitter, block_emitter);
     gl.rotation = game.physics.arcade.angleToPointer(gl);
     if (gl.angle < -90 || gl.angle > 90)
       gl.scale.y = -.5;
@@ -86,7 +97,7 @@ var play_state = {
       fire();
     }
 
-    //manually work with particles to be ableto simulate friction.
+    //manually work with particles to be able to simulate friction.
     //need to find a better way of doing this from the emitter class.
     for (var i = 0; i < block_emitter.total; i++) {
       a = block_emitter.children[i];
@@ -107,6 +118,7 @@ var play_state = {
         }
       }
     }
+    //bullets.forEachAlive(particleBurst, bullets);
 
   },
 
@@ -138,9 +150,16 @@ function fire() {
     bullet.reset(gl.x - 5, gl.y - 5);
     //bullet.reset(xComponent - 5, yComponent + gl.y - 5);
     game.physics.arcade.moveToPointer(bullet, 300);
+
   }
 }
 
+//set trail on bullets
+function particleBurst(bullet) {
+  bullet_trail.x = bullet.x;
+  bullet_trail.y = bullet.y;
+  bullet_trail.emitParticle();
+}
 function KillBullet(bullet,tile) {
   bullet.kill();
   StartEmitter(bullet_emitter, tile.worldX, tile.worldY,4);
@@ -148,7 +167,6 @@ function KillBullet(bullet,tile) {
     map.removeTile(tile.x, tile.y);
     StartEmitter(block_emitter, tile.worldX, tile.worldY,10);
   }
-  //main_layer.dirty = true;
 }
 
 function KillEmitter(emitter, tile) {
@@ -170,7 +188,7 @@ function StartEmitter(emitter,x,y,amount)
     yMultiplier = Math.pow(emitter.scale.y, -1)
   emitter.x = x * xMultiplier;
   emitter.y = y * yMultiplier;
-  emitter.start(true, 8000, 4, amount);
+  emitter.start(true, 4000, 4, amount);
 }
 
 
