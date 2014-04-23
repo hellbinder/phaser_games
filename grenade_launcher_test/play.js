@@ -1,12 +1,14 @@
 ﻿/// <reference path="phaser.js" />
 /// <reference path="game.js" />
-var bullets, layer, gl, block_emitter, bullet_emitter;
+var bullets, layer, gl;
+var block_emitter;
+var bullet_emitter;
 var fireRate = 100, nextFire = 0;
 var grenadeLauncherImage;
 var play_state = {
   create: function () {
 
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.P2);
 
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
@@ -42,29 +44,33 @@ var play_state = {
 
     //create cluster bomb emmiter
     block_emitter = game.add.emitter(game.world.centerX, game.world.centerY, 250);
+    block_emitter.physicsBodyType = Phaser.Physics.Arcade;
+    block_emitter.enableBody = true;
     block_emitter.makeParticles('tile_ss', 161);
-    block_emitter.minParticleScale = .3
-    block_emitter.maxParticleScale = .3
-    block_emitter.scale.x = .3;
-    block_emitter.scale.y = .3;
     block_emitter.minParticleSpeed.setTo(-200, -300);
-    block_emitter.maxParticleSpeed.setTo(200, -400);
+    block_emitter.maxParticleSpeed.setTo(200, -500);
+    block_emitter.minParticleScale = .2;
+    block_emitter.maxParticleScale = .5;
     block_emitter.gravity = 800;
-    block_emitter.bounce.setTo(0.5, 0.5);
-    block_emitter.angularDrag = 0;
-    block_emitter.particleDrag = .1
+    block_emitter.bounce.setTo(0.3, 0.3);
+    block_emitter.angularDrag = 30;
+    block_emitter.particleDrag = .08;
 
     //create block bomb emmiter
     bullet_emitter = game.add.emitter(game.world.centerX, game.world.centerY, 250);
+    bullet_emitter.physicsBodyType = Phaser.Physics.Arcade;
     bullet_emitter.makeParticles('bullet');
     bullet_emitter.minParticleSpeed.setTo(-200, -300);
     bullet_emitter.maxParticleSpeed.setTo(200, -400);
-    bullet_emitter.gravity = 800;
+    bullet_emitter.minParticleScale = .5;
+    bullet_emitter.maxParticleScale = .5;
+    bullet_emitter.gravity = 500;
     bullet_emitter.bounce.setTo(0.5, 0.5);
     bullet_emitter.angularDrag = 30;
-    bullet_emitter.particleDrag.setTo(.1, .1);
+    bullet_emitter.particleDrag = .8;
 
 
+    
   },
   update: function () {
     game.physics.arcade.collide(bullet_emitter, main_layer, KillEmitter);
@@ -80,10 +86,38 @@ var play_state = {
       fire();
     }
 
+    //manually work with particles to be ableto simulate friction.
+    //need to find a better way of doing this from the emitter class.
+    for (var i = 0; i < block_emitter.total; i++) {
+      a = block_emitter.children[i];
+      a.body.allowRotation = false;
+      if (a.body.onFloor()) //check if touching the ground
+      {
+        if (a.body.velocity.x > 0) {
+          a.body.velocity.x -= 5;
+          //if velocity passes from positive to negative when setting new velocity, then set it to 0 so it doesnt change anymore.
+          if (a.body.velocity.x < 0)
+            a.body.velocity.x = 0;
+        }
+        else if (a.body.velocity.x < 0) {
+          a.body.velocity.x += 5;
+          //if velocity passes from negative to positive when setting new velocity, then set it to 0 so it doesnt change anymore.
+          if (a.body.velocity.x > 0)
+            a.body.velocity.x = 0;
+        }
+      }
+    }
+
   },
 
   render: function () {
     game.debug.spriteInfo(gl, 32, 32);
+    //debug each emitter particle
+    //for (var i = 0; i < block_emitter.total; i++) {
+    //  if (block_emitter.children[i].visible) {
+    //    game.debug.body(block_emitter.children[i]);
+    //  }
+    //}
   }
 };
 
@@ -112,7 +146,7 @@ function KillBullet(bullet,tile) {
   StartEmitter(bullet_emitter, tile.worldX, tile.worldY,4);
   if (IsTileDestroyable(tile.index)) {
     map.removeTile(tile.x, tile.y);
-    StartEmitter(block_emitter, tile.worldX, tile.worldY,20);
+    StartEmitter(block_emitter, tile.worldX, tile.worldY,10);
   }
   //main_layer.dirty = true;
 }
@@ -120,7 +154,7 @@ function KillBullet(bullet,tile) {
 function KillEmitter(emitter, tile) {
   if (IsTileDestroyable(tile.index)) {
     map.removeTile(tile.x, tile.y);
-    StartEmitter(block_emitter, tile.worldX, tile.worldY, 20);
+    StartEmitter(block_emitter, tile.worldX, tile.worldY, 10);
   }
   emitter.kill();
 }
@@ -136,14 +170,13 @@ function StartEmitter(emitter,x,y,amount)
     yMultiplier = Math.pow(emitter.scale.y, -1)
   emitter.x = x * xMultiplier;
   emitter.y = y * yMultiplier;
-  emitter.start(true, 4000, 4, amount);
+  emitter.start(true, 8000, 4, amount);
 }
 
 
 
 function IsTileDestroyable(tile_index) {
   var tileProperties = map.tilesets[0].tileProperties[tile_index];
-  console.log(tileProperties);
   if (tileProperties !== undefined)
     return tileProperties.destroyable;
   else
